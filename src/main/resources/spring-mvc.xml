@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation=" 
+                http://www.springframework.org/schema/beans 
+                http://www.springframework.org/schema/beans/spring-beans-3.1.xsd 
+                http://www.springframework.org/schema/context 
+                http://www.springframework.org/schema/context/spring-context-3.1.xsd 
+                http://www.springframework.org/schema/mvc 
+                http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd">
+	
+	<!-- 启用SpringMVC的注解功能,它会自动注册HandlerMapping、HandlerAdapter、ExceptionResolver的相关实例 -->
+	<mvc:annotation-driven />
+	<!-- SpringMVC的扫描范围 -->
+	<context:component-scan base-package="com.ajie.wechat.controller" />
+	
+	<!-- 默认访问跳转到登录页面，即定义无Controller的path<->view直接映射 
+	<mvc:view-controller path="/" view-name="redirect:/login"/>
+	-->
+	
+	<!-- 静态文件访问 -->
+	<mvc:resources mapping="/resources/**" location="/resources/" />
+	
+	<!-- 配置SpringMVC的视图解析器 --> 
+	<!-- 其viewClass属性的默认值就是org.springframework.web.servlet.view.JstlView -->  
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<!-- <property name="viewClass" value="org.springframework.web.servlet.view.JstlView" /> -->
+		<property name="prefix" value="/" />
+		<property name="suffix" value=".jsp" />
+	</bean>
+	
+	<!-- 配置SpringMVC的异常解析器 --> 
+	<bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+		<property name="exceptionMappings">
+			<props>
+				<!-- 发生授权异常时，跳到指定页 -->
+				<prop key="org.apache.shiro.authz.UnauthorizedException">/system/error</prop>
+				 
+				 <!-- SpringMVC在超出上传文件限制时，会抛出org.springframework.web.multipart.MaxUploadSizeExceededException -->  
+				 <!-- 遇到MaxUploadSizeExceededException异常时，自动跳转到/WEB-INF/error_fileupload.jsp页面 -->  
+                <!-- <prop key="org.springframework.web.multipart.MaxUploadSizeExceededException">WEB-INF/error_fileupload</prop> -->  
+			</props>
+		</property>
+	</bean>
+	
+	
+	
+	<!-- 采用SpringMVC自带的JSON转换工具，支持@ResponseBody注解 -->
+<!-- 	<bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+		<property name="messageConverters">
+			<list>
+				<bean class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter" />
+			</list>
+		</property>
+	</bean> -->
+
+	<!-- 避免IE执行AJAX时,返回JSON出现下载文件 -->
+<!-- 	<bean id="mappingJacksonHttpMessageConverter"
+		class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter">
+		<property name="supportedMediaTypes">
+			<list>
+				<value>text/html;charset=UTF-8</value>
+			</list>
+		</property>
+	</bean> -->
+	
+	<!-- 上传 -->
+<!-- 	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">        
+        <property name="defaultEncoding" value="utf-8"></property>        
+    </bean> -->
+    
+</beans>
