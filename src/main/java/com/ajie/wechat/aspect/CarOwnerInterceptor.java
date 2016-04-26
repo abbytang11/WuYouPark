@@ -37,22 +37,22 @@ public class CarOwnerInterceptor {
         }
     }
 
-    @Around(value = "execution(public * com.ajie.wechat.dao.CarOwnerDao.findOne(..))")
-    public Object doBasicProfiling(ProceedingJoinPoint proceedingJoinPoint) throws Throwable{
-        System.out.println("进入环绕通知");
-        Object object = proceedingJoinPoint.proceed();//执行该方法
-        Class aClass = object.getClass();
+
+    @AfterReturning(
+            pointcut="execution(public * com.ajie.wechat.dao.CarOwnerDao.findOne(..))",
+            returning="retVal")
+    public void doBasicProfiling(Object retVal) throws Throwable{
+        Class aClass = retVal.getClass();
         for (Field field : aClass.getDeclaredFields()) {
             Security security = field.getAnnotation(Security.class);
             if (security != null) {
                 if (security.algorithm() == Algorithm.rsa) {
                     field.setAccessible(true);
-                    String result = RSAUntil.decodingByRSA(field.get(object).toString());
-                    field.set(object, result);
+                    String result = RSAUntil.decodingByRSA(field.get(retVal).toString());
+                    field.set(retVal, result);
                 }
             }
         }
-        return object;
     }
 
 }
