@@ -26,6 +26,7 @@ public class CarOwnerController {
     }
     @RequestMapping(value = "/update.htm",method = RequestMethod.POST)
     public String update(CarOwner carOwner){
+
         carOwnerService.register(carOwner);
         return "index";
     }
